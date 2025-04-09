@@ -2,7 +2,7 @@
 scikit-learn==1.6.1
 skops==0.11.0
 numpy==1.24.0
-pansdas==1.5.0
+pandas==1.5.0
 gradio
 
 # App Dependecies
