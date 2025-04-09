@@ -11,19 +11,21 @@ from sklearn.metrics import accuracy_score, f1_score
 from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
 
 # Load the dataset
-drug_df = pd.read_csv('./Data/drug.csv')
+drug_df = pd.read_csv("./Data/drug.csv")
 drug_df = drug_df.sample(frac=1)
-drug_df.head(3) 
+drug_df.head(3)
 
 # Split the dataset into train and test variable
-X = drug_df.drop(columns=['Drug'], axis=1).values
-y = drug_df['Drug'].values
+X = drug_df.drop(columns=["Drug"], axis=1).values
+y = drug_df["Drug"].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=125)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=125
+)
 
 # Pipeline for preprocessing and model training
-cat_col = [1,2,3]
-num_col = [0,4]
+cat_col = [1, 2, 3]
+num_col = [0, 4]
 transform = ColumnTransformer(
     [
         ("encoder", OrdinalEncoder(), cat_col),
@@ -34,8 +36,7 @@ transform = ColumnTransformer(
 pipe = Pipeline(
     steps=[
         ("preprocessing", transform),
-        ("model", RandomForestClassifier(n_estimators=100,
-    random_state=125)),
+        ("model", RandomForestClassifier(n_estimators=100, random_state=125)),
     ]
 )
 pipe.fit(X_train, y_train)
@@ -45,10 +46,11 @@ predictions = pipe.predict(X_test)
 accuracy = accuracy_score(y_test, predictions)
 f1 = f1_score(y_test, predictions, average="macro")
 
-print("Accuracy:", str(round(accuracy, 2) * 100) + "%","F1:", round(f1,2))
+print("Accuracy:", str(round(accuracy, 2) * 100) + "%", "F1:", round(f1, 2))
 
 # Save the result
-with open("Results/metrics.txt","w") as outfile:outfile.write(f"\nAccuracy = {round(accuracy, 2)}, F1 Score = {round(f1, 2)}.")
+with open("Results/metrics.txt", "w") as outfile:
+    outfile.write(f"\nAccuracy = {round(accuracy, 2)}, F1 Score = {round(f1, 2)}.")
 
 # Confusion matrix
 cm = confusion_matrix(y_test, predictions, labels=pipe.classes_)
@@ -57,4 +59,4 @@ disp.plot()
 plt.savefig("Results/model_results.png", dpi=120)
 
 # Save the model
-sio.dump(pipe,"Model/drug_pipeline.skops")
+sio.dump(pipe, "Model/drug_pipeline.skops")
